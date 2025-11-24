@@ -5,8 +5,9 @@ import NavBar from "./components/NavBar"; //
 import Home from "./components/Home";
 import Timer from "./components/Timer";
 import ToDoList from "./ToDoList";
-import GooberMenu from "./components/GooberMenu";
+import Layout from "./components/Layout"
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import GooberImage from "./components/GooberImage";
 
 function App() {
   // had to add because bootstrap defaults to light mode
@@ -30,7 +31,7 @@ function App() {
         <div>
           <NavBar />
         </div>
-        <GooberMenu
+        <Layout
           setXP={setXP}
           setLevel={setLevel}
           setMoney={setMoney}
@@ -39,6 +40,7 @@ function App() {
           level={level}
           money={money}
           currentHealth={currentHealth}
+          topBoxContent={<GooberImage />}
         />
         <Routes>
           <Route path="/" element={<Home />} />
