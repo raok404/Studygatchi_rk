@@ -1,7 +1,17 @@
 import { useState } from "react";
 import "./App.css";
 
-export default function ToDoList() {
+interface Props {
+  incrementXP: (arg0: number) => void;
+  incrementMoney: (arg0: number) => void;
+  incrementHealth: (arg0: number) => void;
+}
+
+export default function ToDoList({incrementXP, incrementMoney, incrementHealth}: Props) {
+  // useEffect(()=>{
+  //   // TODO fetch tasks from API once login is implemented
+  // }, [])
+
   const [items, setItems] = useState([
     "Lock in time",
     "Read Chapters 2-3",
@@ -26,6 +36,19 @@ export default function ToDoList() {
   };
 
   const checkItem = (item: string) => {
+    if (!checkedItems[item]) {
+      // add points + health if they are checking the task
+      incrementHealth(5);
+      incrementXP(10);
+      incrementMoney(5);
+    }
+    else {
+      // remove points + health if they are un-checking the task
+      incrementHealth(-5);
+      incrementXP(-10);
+      incrementMoney(-5);
+    }
+    // TODO once login feature has been implemented: make a PATCH request to api/update_task to mark task as complete in the database
     setCheckedItems((prev) => ({ ...prev, [item]: !prev[item] }));
   };
 
