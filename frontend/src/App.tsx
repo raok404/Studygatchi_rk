@@ -9,6 +9,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from './components/ThemeProvider';
 import "bootstrap/dist/css/bootstrap.min.css";
 
+export interface Task {task: string, isChecked: boolean};
+
 function App() {
   // had to add because bootstrap defaults to light mode
   document.documentElement.setAttribute("data-bs-theme", "dark");
@@ -18,6 +20,14 @@ function App() {
   const [level, setLevel] = useState(1);
   const [money, setMoney] = useState(0);
   const [currentHealth, setHealth] = useState(50);
+
+  const [tasks, setTasks] = useState<Task[]>(
+    [
+      {task: "Lock in time", isChecked: false},
+      {task: "Read Chapters 2-3", isChecked: false},
+      {task: "Write new Draft", isChecked: false}
+    ]
+  );
 
   // functions to increment the xp, money, and health
   // xp, money, and health cannot be below 0
@@ -33,6 +43,35 @@ function App() {
     newHealth = (newHealth >= 0 ? newHealth : 0);
     newHealth = (newHealth <= 100 ? newHealth : 100);
     setHealth(newHealth);
+  }
+
+  const addTask = (newTask: string) => {
+    setTasks(prevTasks => [
+      ...prevTasks,
+      { task: newTask, isChecked: false }
+    ])
+  }
+  const checkTask = (taskIndex:number) => {
+    if (!tasks[taskIndex].isChecked) {
+      // add points + health if they are checking the task
+      incrementHealth(5);
+      incrementXP(10);
+      incrementMoney(5);
+    }
+    else {
+      // remove points + health if they are un-checking the task
+      incrementHealth(-5);
+      incrementXP(-10);
+      incrementMoney(-5);
+    }
+
+    const updated = tasks.map((value, index)=>
+      index == taskIndex ? {task: value.task, isChecked: !(value.isChecked)} : value)
+    setTasks(updated);
+  }
+  const removeTask = (taskIndex:number) => {
+    const updated = tasks.filter((value, index) => index != taskIndex)
+    setTasks(updated);
   }
 
   useEffect(()=> {
@@ -66,7 +105,7 @@ function App() {
           <Routes>
             <Route path="/settings" element={<SettingsMenu />} />
             <Route path="/timer" element={<Timer />} />
-            <Route path="/todo" element={<ToDoList incrementHealth={incrementHealth} incrementMoney={incrementMoney} incrementXP={incrementXP}/>} />
+            <Route path="/todo" element={<ToDoList tasks={tasks} removeTask={removeTask} addTask={addTask} checkTask={checkTask}/>} />
           </Routes>
         </div>
       </Router>
